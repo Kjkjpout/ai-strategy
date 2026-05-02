@@ -2,59 +2,89 @@ import streamlit as st
 import time
 
 # 設定網頁標題與風格
-st.set_page_config(page_title="AI 短影音全自動化工作站", layout="wide")
+st.set_page_config(page_title="AI Viral Master Pro", layout="wide")
 
-# 自定義 CSS 營造簡約科技感
+# 強化的專業簡約科技感 CSS
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; color: #ffffff; }
-    .stButton>button { background-color: #00f2ea; color: black; border-radius: 5px; }
-    .stTextInput>div>div>input { background-color: #262730; color: white; }
+    /* 全局背景 */
+    .stApp {
+        background-color: #0B0E14;
+    }
+    /* 玻璃擬態卡片 */
+    .video-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(0, 242, 234, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    /* 螢光科技感標題 */
+    h1, h2, h3 {
+        color: #00F2EA !important;
+        font-family: 'Inter', sans-serif;
+    }
+    /* 標籤樣式 */
+    .hook-tag {
+        background-color: #FF2E63;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🚀 AI 短影音全鏈路開發系統")
-st.subheader("分析爆款鉤子 > 自動生成影片 > 多平台分發")
+st.title("⚡ AI Viral Master Pro")
+st.markdown("#### 專業級短影音爆款基因分析與全自動生產系統")
 
-# 第一部分：輸入區
-url = st.text_input("請貼入 TikTok / Instagram / YouTube 影片或帳號連結：", placeholder="https://www.tiktok.com/@example/video/...")
+# 輸入區重設
+with st.container():
+    col_input, col_btn = st.columns([4, 1])
+    with col_input:
+        url = st.text_input("", placeholder="請貼入爆款影片連結 (TikTok / YouTube / IG)...", label_visibility="collapsed")
+    with col_btn:
+        process_btn = st.button("開始深度解析", use_container_width=True)
 
-if st.button("開始深度分析與產出"):
-    if url:
-        with st.status("正在執行自動化流程...", expanded=True) as status:
-            # 第一階段：解析連結與爆款分析
-            st.write("🔍 正在抓取數據並分析『爆款鉤子』...")
-            time.sleep(2)  # 模擬 API 調用
-            st.info("分析結果：此影片成功關鍵在於前 3 秒的『負面情緒反轉』與『高飽和視覺衝擊』。")
-            
-            # 第二階段：生成爆款標題與腳本
-            st.write("✍️ 正在生成 5 組高轉化率標題及腳本...")
-            time.sleep(2)
-            st.success("標題生成完成：1. 原來大家都做錯了... 2. 三招教你快速... (略)")
+if process_btn and url:
+    with st.spinner("🚀 正在解析全球熱門數據庫，提取爆款基因..."):
+        time.sleep(1.5)
+        
+        # --- 爆款分析區 ---
+        st.subheader("🎯 爆款邏輯解析 (Viral Logic)")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown('<div class="video-card"><b>核心鉤子 (Hook)</b><br><span style="color:#00F2EA">負面預期逆轉</span><br><small>利用「你以為...其實...」觸發大腦好奇心</small></div>', unsafe_allow_html=True)
+        with c2:
+            st.markdown('<div class="video-card"><b>視覺節奏 (Pacing)</b><br><span style="color:#00F2EA">0.8s 極速轉場</span><br><small>高頻率畫面切換，強制維持注意力</small></div>', unsafe_allow_html=True)
+        with c3:
+            st.markdown('<div class="video-card"><b>情緒價值 (Value)</b><br><span style="color:#00F2EA">獲得感 + 焦慮緩解</span><br><small>精準打中創業者對流量的渴望</small></div>', unsafe_allow_html=True)
 
-            # 第三階段：AI 影片渲染（預留 AIGC 接口）
-            st.write("🎬 正在調用 AI 引擎全自動渲染 5 支 30s 影片...")
-            progress_bar = st.progress(0)
-            for i in range(100):
-                time.sleep(0.05)
-                progress_bar.progress(i + 1)
-            
-            # 第四階段：分發準備
-            st.write("📡 影片已就緒，準備分發至 TikTok, Reels, Shorts...")
-            time.sleep(1)
-            
-            status.update(label="✅ 全流程執行成功！", state="complete", expanded=False)
-
-        # 輸出展示區
         st.divider()
-        col1, col2 = st.columns(2)
-        with col1:
-            st.video("https://www.w3schools.com/html/mov_bbb.mp4") # 這裡之後換成產出的影片路徑
-            st.write("🎥 產出影片 #1 - 預覽")
-        with col2:
-            st.write("### 📊 數據看板 (簡約科技風格)")
-            st.metric(label="預估爆發潛力", value="92%", delta="高於平均 15%")
-            st.write("關鍵字建議：#量化交易 #AI創業 #爆款邏輯")
 
-    else:
-        st.warning("請先輸入有效的連結。")
+        # --- 五條爆款腳本展示 ---
+        st.subheader("🎬 定製化 AI 爆款腳本 (30s)")
+        
+        scripts = [
+            {"title": "認知差反擊篇", "hook": "「為什麼你每天發片卻沒流量？因為你第一秒就錯了！」", "content": "拆解大數據底層邏輯，3個動作讓權重翻倍。"},
+            {"title": "利益誘惑篇", "hook": "「普通人翻身的最後機會，2026年AI全自動化變現路徑曝光！」", "content": "展示工具自動運行畫面，強調低門檻高回報。"},
+            {"title": "恐懼驅動篇", "hook": "「再不學會這個工具，你的帳號將在下個月徹底被限流！」", "content": "對比新舊算法差異，導向我們的AI解決方案。"},
+            {"title": "實操揭秘篇", "hook": "「這是我用 10 秒鐘分析出來的爆款密碼，完全免費分享。」", "content": "螢幕錄製展示 APP 操作過程，建立信任感。"},
+            {"title": "成功案例篇", "hook": "「三個月漲粉百萬，這套腳本公式到底有多猛？」", "content": "快速展示數據後台，最後引導下載 APP。"}
+        ]
+
+        for i, s in enumerate(scripts):
+            with st.expander(f"🔥 方案 {i+1}：{s['title']}"):
+                col_s1, col_s2 = st.columns([1, 2])
+                with col_s1:
+                    st.error(f"🪝 黃金 3 秒鉤子：\n\n {s['hook']}")
+                with col_s2:
+                    st.info(f"📝 30秒腳本核心：\n\n {s['content']}")
+                    st.caption("⏱️ 0-3s: Hook | 3-18s: Value Content | 18-30s: CTA (Call to Action)")
+
+        # --- 影片生產狀態 ---
+        st.subheader("⚙️ 影片全自動生產與分發進度")
+        st.write("已調用渲染引擎，預估產出時間：2分30秒")
+        st.progress(45)
+        st.caption("分發渠道預約：TikTok (✓) | Reels (✓) | YouTube Shorts (✓)")
