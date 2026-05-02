@@ -1,158 +1,137 @@
 import streamlit as st
 import time
 
-# 頁面配置
-st.set_page_config(page_title="ViralAI - 爆款引擎", layout="wide")
+# --- 極致 UI 設置 (複刻 ViralAI 截圖風格) ---
+st.set_page_config(page_title="ViralAI - 爆款腳本引擎", layout="wide")
 
-# --- 核心 CSS：完全複刻截圖中的深色質感與漸變按鈕 ---
 st.markdown("""
     <style>
-    /* 總背景：深紫黑 */
-    .stApp {
-        background-color: #0E0B16;
-    }
+    .stApp { background-color: #0E0B16; }
+    h1, h2, h3, p, span, label { color: #FFFFFF !important; }
     
-    /* 標題與文字強制白色 */
-    h1, h2, h3, p, span, label {
-        color: #FFFFFF !important;
-        font-family: 'Inter', -apple-system, sans-serif;
+    /* 複刻紅橙漸變按鈕 */
+    div.stButton > button {
+        background: linear-gradient(90deg, #FF2E63, #FF6A3D) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 12px 0px !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        width: 100%;
     }
 
-    /* 模擬截圖中的平台選擇按鈕 (選中狀態) */
-    .platform-btn-active {
-        background: rgba(255, 46, 99, 0.15);
-        border: 1.5px solid #FF2E63;
-        color: #FF2E63 !important;
-        padding: 10px 20px;
-        border-radius: 12px;
-        font-weight: bold;
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    /* 模擬截圖中的平台選擇按鈕 (未選中) */
-    .platform-btn {
+    /* 平台選擇標籤 */
+    .platform-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .platform-tag {
         background: #1C1C26;
         border: 1px solid #333;
         color: #888 !important;
-        padding: 10px 20px;
-        border-radius: 12px;
-        display: inline-block;
-        margin-right: 10px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .platform-tag-active {
+        background: rgba(255, 46, 99, 0.15);
+        border: 1.5px solid #FF2E63;
+        color: #FF2E63 !important;
+        font-weight: bold;
     }
 
-    /* 爆款方案卡片：深色微透感 */
+    /* 方案卡片 */
     .viral-card {
         background: #161622;
         border: 1px solid #2A2A3A;
         border-radius: 20px;
         padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
     }
 
-    /* 關鍵字與標籤樣式 */
-    .tag-hook {
-        background: linear-gradient(90deg, #FF2E63, #FF5F6D);
-        color: white !important;
-        padding: 4px 12px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    /* 腳本文案框：全黑背景 */
-    .script-box {
+    /* 逐字稿文案框 */
+    .script-text-box {
         background: #000000;
-        border: 1px solid #333;
-        border-radius: 12px;
+        border-left: 4px solid #FF2E63;
         padding: 20px;
         color: #FFFFFF !important;
-        font-size: 18px;
-        line-height: 1.8;
-        white-space: pre-wrap;
-    }
-
-    /* 核心漸變大按鈕：紅橙色 */
-    div.stButton > button {
-        background: linear-gradient(90deg, #FF2E63, #FF6A3D) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 15px !important;
-        padding: 15px 0px !important;
         font-size: 20px !important;
-        font-weight: bold !important;
-        width: 100%;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px rgba(255, 46, 99, 0.4);
+        line-height: 1.6;
+        white-space: pre-wrap;
+        margin: 15px 0;
     }
     
-    /* 輸入框樣式 */
-    div[data-baseweb="input"] {
-        background-color: #1C1C26 !important;
-        border-radius: 15px !important;
-        border: 1px solid #333 !important;
-    }
+    .title-orange { color: #FF6A3D !important; font-size: 24px; font-weight: 800; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 介面佈局 ---
+# --- 標題區 ---
+st.markdown("<h1 style='font-size: 2.2rem;'>🔥 ViralAI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color:#888 !important;'>全平台爆款引擎 · 深度文案生成</p>", unsafe_allow_html=True)
 
-st.markdown("<h1 style='font-size: 2.5rem;'>🔥 ViralAI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color:#888 !important;'>全平台爆款引擎 - 真實 AI 深度分析</p>", unsafe_allow_html=True)
+st.write("")
+st.markdown("### 🔥 輸入帳號/連結，生成逐字腳本")
 
-st.markdown("### 🔥 輸入帳號，AI 真實分析")
-st.markdown("<p style='color:#888 !important;'>貼上任何平台的帳號連結或名稱，立即分析爆款策略</p>", unsafe_allow_html=True)
-
-# 平台選擇模擬 (純視覺)
+# 模擬平台切換
 st.markdown("""
-    <div>
-        <span class="platform-btn-active">🎵 TikTok</span>
-        <span class="platform-btn">🔴 抖音</span>
-        <span class="platform-btn">▶️ YouTube</span>
-        <span class="platform-btn">📸 Instagram</span>
-        <span class="platform-btn">📕 小紅書</span>
+    <div class="platform-row">
+        <div class="platform-tag platform-tag-active">🎵 TikTok</div>
+        <div class="platform-tag">🔴 抖音</div>
+        <div class="platform-tag">▶️ YouTube</div>
+        <div class="platform-tag">📸 Instagram</div>
+        <div class="platform-tag">📕 小紅書</div>
     </div>
     """, unsafe_allow_html=True)
 
-st.write("") # 間距
+url = st.text_input("貼入連結或帳號名稱", placeholder="https://...", label_visibility="collapsed")
 
-# 帳號連結輸入
-url = st.text_input("帳號連結或名稱", placeholder="例：@username、https://www.tiktok.co...", label_visibility="collapsed")
+# --- 模擬爆款腳本數據庫 (真正的口播文案) ---
+scripts_repo = [
+    {
+        "title": "方案 1：【焦慮反擊類】500播放的真相",
+        "hook": "你以為內容不好？錯！是你第一秒就在趕人！",
+        "copywriting": "「為什麼你的影片總是卡在500播放？(停頓)\n不是你拍得爛，而是你根本不懂大數據的『開頭生存法則』！\n大多數人第一秒就在自我介紹，或者是講廢話，(快節奏)\n記住，現在的人耐心只有3秒。\n你想突破播放量，必須把這套爆款基因植入你的腳本。\n點擊左下角，我幫你分析好的模板，直接照著唸就能火！」"
+    },
+    {
+        "title": "方案 2：【利益誘惑類】AI 幫你賺錢",
+        "hook": "不用露臉、不用拍攝，這支影片是 AI 30 秒做出來的！",
+        "copywriting": "「聽好了，2026年如果你還在苦哈哈地剪片，你真的會被淘汰！(展示手機)\n你看這支影片，(指螢幕) 從文案到配音到畫面，全部是 AI 一鍵生成的。\n我只用了不到30秒，效果比你剪3個小時還要好！\n想知道我是怎麼做到的嗎？\n關注我，回覆『AI』，我把這套全自動變現流程發給你！」"
+    },
+    {
+        "title": "方案 3：【數據揭秘類】百萬大號的暗器",
+        "hook": "那些大網紅不肯說的秘密，其實就在這套數據裡！",
+        "copywriting": "「你真的以為那些百萬大號是靠運氣火的嗎？(搖頭)\n別傻了，他們背後都有強大的數據監控工具！\n他們知道幾點發、用什麼鉤子、哪句話能讓你留下來。(加速)\n今天我把這套專業級的分析報告直接公開，\n想看你帳號爆款基因的，點讚這部影片，首頁連結見！」"
+    },
+    {
+        "title": "方案 4：【邏輯拆解類】爆款萬能公式",
+        "hook": "所有熱門影片，前 3 秒都逃不過這套邏輯！",
+        "copywriting": "「短影音爆紅真的有公式！(敲黑板)\n公式就是：負面鉤子 + 價值觀點 + 行動導流。\n第一句先嚇唬他，第二段給出解決方案，最後讓他不得不關注你。\n這套邏輯在 TikTok、抖音、YT 全部通用！\n如果你還不會寫腳本，收藏這部影片，下次發片對照一遍。」"
+    },
+    {
+        "title": "方案 5：【效率革命類】解放雙手",
+        "hook": "別再手剪了！我用 AI 搞定了一週的內容！",
+        "copywriting": "「你還在逐幀剪輯、對音軌嗎？(驚訝)\n太慢了！現在大玩家都在用 AI 自動化生產內容了。\n我這一週發了50支影片，全部是 AI 幫我完成的，播放量反而更高！\n想跟我一樣解放雙手的，點擊下方連結，\n直接開啟你的 AI 內容工廠試用名額！」"
+    }
+]
 
-# 大按鈕
-if st.button("🔍 開始 AI 深度分析"):
+if st.button("🔍 開始 AI 深度分析與生成"):
     if url:
-        with st.spinner("🚀 正在抓取數據庫，解析爆款基因..."):
+        with st.status("🛸 正在解析全平台數據... 生成 30s 逐字口播稿", expanded=True):
             time.sleep(1.5)
             
-            st.markdown("---")
-            st.markdown("## 📊 AI 定製生成的 5 套爆款方案")
-            
-            # 定義 5 組資料 (包含 30s 腳本)
-            scripts = [
-                {"title": "方案 1：反直覺流量爆發", "hook": "為什麼你發片沒人看？因為你第一秒就在趕人！", "script": "0-5s: 展示低流量截圖，配負面音樂。\n5-20s: 拆解『完播率門檻』邏輯圖表。\n20-30s: 私訊領取 AI 爆款模板。"},
-                {"title": "方案 2：AI 工具翻身術", "hook": "不用露臉、不用拍攝，這支影片是 AI 做出來的！", "script": "0-5s: 手機快速操作畫面，快節奏節奏感。\n5-20s: 演示 AI 10秒自動渲染素材過程。\n20-30s: 關注我，掌握全自動化產出。"},
-                {"title": "方案 3：數據降維打擊", "hook": "百萬大號的秘密，是用了這套分析工具！", "script": "0-5s: 滿屏點讚評論動畫效果。\n5-20s: 深度對比競爭對手鉤子公式。\n20-30s: 點讚收藏下一支照著拍。"},
-                {"title": "方案 4：熱門底層公式", "hook": "所有熱門影片前3秒都逃不過這套邏輯！", "script": "0-5s: 特寫爆款標題碎裂特效。\n5-20s: 拆解 Hook-Story-CTA 黃金比例。\n20-30s: 內測連結就在主頁。"},
-                {"title": "方案 5：效率剪輯革命", "hook": "我用 AI 做完一周內容，你還在手動對位？", "script": "0-5s: 左邊人工 vs 右邊 AI 速度對比。\n5-20s: 展示自動配音與運鏡同步完成。\n20-30s: 立即點擊下方領取試用。"}
-            ]
-
-            for i, s in enumerate(scripts):
-                st.markdown(f"""
-                <div class="viral-card">
-                    <div style="font-size: 24px; color: #FF6A3D !important; font-weight: 800; margin-bottom:15px;">{s['title']}</div>
-                    <div class="tag-hook">黃金 3 秒鉤子</div>
-                    <p style="font-size: 22px; font-weight: bold; margin: 15px 0;">{s['hook']}</p>
-                    <div style="color: #FF2E63; font-weight: bold; margin-bottom: 10px;">📋 30 秒執行腳本文案：</div>
-                    <div class="script-box">{s['script']}</div>
+        st.markdown("## 📊 分析完成！為您生成 5 套口播腳本")
+        
+        for i, s in enumerate(scripts_repo):
+            st.markdown(f"""
+            <div class="viral-card">
+                <div class="title-orange">{s['title']}</div>
+                <div style="margin: 15px 0;">
+                    <span style="background:#FF2E63; padding:4px 10px; border-radius:5px; font-weight:bold;">🔥 爆款鉤子</span>
+                    <p style="font-size:22px; font-weight:bold; margin-top:10px;">{s['hook']}</p>
                 </div>
-                """, unsafe_allow_html=True)
-                
-                # 每個方案獨立的生成按鈕
-                st.button(f"🎬 生成方案 {i+1} 預覽影片", key=f"btn_{i}")
+                <div style="color: #00F2EA; font-weight: bold;">🎙️ 30 秒口播逐字文案（可直接拍片）：</div>
+                <div class="script-text-box">{s['copywriting']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.button(f"🎬 方案 {i+1} 一鍵生成影片預覽", key=f"gen_{i}")
     else:
-        st.warning("請先輸入帳號或連結")
+        st.warning("請輸入有效連結")
