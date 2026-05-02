@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# --- UI Setup ---
+# --- ViralAI Mobile UI Setup ---
 st.set_page_config(page_title="ViralAI", layout="centered")
 
 st.markdown("""
@@ -53,15 +53,15 @@ st.markdown("""
 url_input = st.text_input("貼上連結：", value="http://xhslink.com/o/5xJrZj2ydiY", label_visibility="collapsed")
 
 if st.button("🔍 開始 AI 深度分析"):
-    with st.status("🚀 正在抓取妝教技術點...", expanded=True):
-        time.sleep(1)
-        st.write("✅ 已識別：闊面臉修容、淡顏釣系、姐感氛圍")
+    with st.status("🚀 正在掃描全平台爆款基因...", expanded=True):
+        time.sleep(1.5)
+        st.write("✅ 成功獲取資料：闊面臉修容、淡顏釣系妝、姐感氛圍")
     
     st.markdown("---")
     st.markdown(f"""
         <div class="viral-card">
             <div style="color: #FF6A3D; font-size: 20px; font-weight: 800;">方案 1：【技術流】闊面翻身術</div>
-            <div style="color: #00F2EA; font-size:14px; margin-top:10px;">🎙️ 30秒口播逐字稿：</div>
+            <div style="color: #00F2EA; font-size:14px; margin-top:10px;">🎙️ 30秒口播逐字文案：</div>
             <div class="script-box">「闊面大鼻頭的姐妹看過來！別再無效化妝了！核心在於『視覺重心上移』。不用拼命打黑陰影，而是強調骨相提亮。學會這套內輪廓修容法，笨重感秒變高級姐感！」</div>
         </div>
     """, unsafe_allow_html=True)
