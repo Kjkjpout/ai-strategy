@@ -1,6 +1,3 @@
 streamlit
-requests
 pandas
-# 之後會用到的 AI 工具
-openai
-google-cloud-storage
+st-gsheets-connection
