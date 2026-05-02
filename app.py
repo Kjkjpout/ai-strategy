@@ -1,108 +1,82 @@
 import streamlit as st
 import time
 
-# --- 1. 頂級視覺配置 (Hermes 滿配風格) ---
-st.set_page_config(page_title="Hermes AI 影片全自動工廠", layout="wide")
+# --- 1. 介面與視覺戰略配置 (Hermes 高端黑金風) ---
+st.set_page_config(page_title="Hermes 滿配 AI 戰略終端", layout="wide")
 
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
-    .glass-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-    .headline-section { background: #222; border: 1px solid #ff4b4b; padding: 15px; border-radius: 8px 8px 0 0; }
-    .script-section { background-color: #000; border: 1px solid #444; border-left: 5px solid #ff4b4b; padding: 20px; line-height: 1.8; }
-    .prompt-section { background: #0d1a0d; border: 1px dashed #00ff00; padding: 15px; border-radius: 0 0 8px 8px; color: #00ff00; font-family: monospace; }
-    .stButton>button { background: linear-gradient(90deg, #ff4b4b 0%, #800000 100%); color: white; height: 60px; font-weight: bold; border-radius: 8px; font-size: 20px; }
-    .highlight-label { color: #ff4b4b; font-weight: bold; margin-bottom: 5px; display: block; }
+    .strategy-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-left: 4px solid #fbbf24;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    .core-title { color: #fbbf24; font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    .stButton>button { background: linear-gradient(90deg, #ff4b4b, #ff7676); color: white; border-radius: 30px; height: 3.5em; font-weight: bold; border: none; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. 主標題與系統狀態 ---
-st.title("🏭 Hermes 滿配 AI 影片自動化工廠")
-cols = st.columns(5)
-modules = ["👤 身份與記憶", "👁️ 感知能力", "🎨 表達能力", "📊 效率與成本", "🧭 生態導航"]
-for i, col in enumerate(cols):
-    col.success(modules[i])
+# --- 2. 主標題與導航 ---
+st.title("🛡️ Hermes 滿配 AI 影片自動化工廠")
+st.caption("基於九大核心戰略規劃架構（Define User Context & Strategy）")
 
-st.divider()
-
-# --- 3. 核心搜尋與分發設定區 ---
-col_in, col_set = st.columns([2, 1])
-
-with col_in:
-    st.subheader("📡 爆款連結偵測")
-    video_url = st.text_input("🔗 請貼入 YouTube / 抖音 / TikTok / IG 連結：", placeholder="在此輸入要拆解的爆款網址...")
-
-with col_set:
-    st.subheader("📤 自動分發設定")
-    target_platforms = st.multiselect("選擇發布平台：", ["抖音", "TikTok", "YouTube Shorts", "Instagram"])
-
-st.write("")
-
-# --- 4. 執行生產 ---
-if st.button("🚀 啟動全鏈路生產與自動分發"):
-    if not video_url:
-        st.error("❌ 李大哥，沒貼連結我沒辦法動啊！")
-    else:
-        with st.status("🏗️ Hermes 生產線執行中...", expanded=True) as status:
-            st.write("🔍 [感知] 正在深度拆解原片文案與爆款基因...")
-            time.sleep(1.2)
-            st.write("✍️ [文案] AI 正在重構 5 套重生腳本與標題...")
-            time.sleep(1.2)
-            st.write("🖼️ [表達] 正在規劃 AI 生圖提示詞與視覺參數...")
-            time.sleep(0.8)
-            if target_platforms:
-                st.write(f"📤 [分發] 影片已排程自動上傳至：{', '.join(target_platforms)}")
+# --- 3. 核心搜尋與解析區 ---
+with st.container():
+    st.markdown("<div class='strategy-card'>", unsafe_allow_html=True)
+    st.markdown("<div class='core-title'>1. 使用情境 (Define User Context)</div>", unsafe_allow_html=True)
+    video_url = st.text_input("🔗 貼上爆款種子連結，讓 AI 解析其背後戰略：", placeholder="https://youtu.be/...")
+    
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        platform = st.multiselect("7. 門檻行動 (Identify Core Contents)：", ["抖音 (Douyin)", "TikTok", "YouTube Shorts", "Instagram Reels"], default=["YouTube Shorts"])
+    with col2:
+        monetize = st.selectbox("5. 收費觸發 (Monetize Strategy)：", ["高單價顧問服務", "APP 訂閱轉化", "付費社群入口", "實體產品引流"])
+    
+    if st.button("🚀 啟動全鏈路生產與自動分發"):
+        if video_url:
+            with st.status("正在依據九大體系生成內容...", expanded=True) as status:
+                st.write("🔍 2. 探尋根源痛點 (Identify Core Problems)...")
                 time.sleep(1)
-            status.update(label="✅ 生產完成！5 套方案已出庫", state="complete", expanded=False)
+                st.write("🎯 3. 設定使用頻率 (Monetization Strategy)...")
+                time.sleep(1)
+                st.write("📊 6. 強化牽引能力 (Identify Your Strategy)...")
+                status.update(label="✅ 戰略部署完成！", state="complete")
+        else:
+            st.error("李大哥，連結還沒填！")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- 5. 輸出 5 套爆款方案 ---
-        def render_factory_output(index, style, titles, script, prompt):
-            with st.expander(f"📦 方案 {index}：{style} (點擊展開)"):
-                title_html = "".join([f"• {t}<br>" for t in titles])
-                st.markdown(f"""
-                <div class='headline-section'>
-                    <span class='highlight-label'>🔥 推薦爆款標題：</span>
-                    <div style='color: #fbbf24; font-size: 18px; font-weight: bold;'>{title_html}</div>
-                </div>
-                <div class='script-section'>
-                    <span class='highlight-label'>🎬 30秒重生腳本：</span>
-                    {script}
-                </div>
-                <div class='prompt-section'>
-                    <span class='highlight-label' style='color:#00ff00;'>🖼️ AI 生圖提示詞 (Prompt)：</span>
-                    {prompt}
-                </div>
-                """, unsafe_allow_html=True)
+# --- 4. 九大核心模塊展示區 (APP 介面規劃預覽) ---
+st.divider()
+st.subheader("📱 APP 介面戰略規劃 (依據九大矩陣)")
 
-        # 方案 1：深夜扎心
-        render_factory_output(1, "深夜扎心風", 
-            ["懂事的人，注定沒人疼嗎？", "這段話，送給深夜還在翻聊天紀錄的你", "原來成長的代價，是學會安靜地崩潰"],
-            "【0-5s】特寫熄滅螢幕。口播：這輩子最遺憾的，不是沒遇到心動的人，而是遇到了，卻發現自己沒資格。<br>【5-25s】獨自走在路燈下。口播：你以為放不下的是他，其實你只是心疼那個傻傻付出的自己。撐傘久了，衣服還是會被打濕。<br>【25-30s】黑底白字。口播：如果你也曾為了一個人徹夜難眠，點個贊，我懂你。",
-            "A lonely person walking under a dim street lamp at night, cinematic shadows, melancholic atmosphere, 8k resolution.")
+row1 = st.columns(3)
+row2 = st.columns(3)
+row3 = st.columns(3)
 
-        # 方案 2：人間清醒
-        render_factory_output(2, "人間清醒風", 
-            ["卑微換不來愛情，只能換來輕視", "醒醒吧！不回訊息就是最好的答案", "停止自我感動，是你變強的第一步"],
-            "【0-5s】剪輯撕照片動作。口播：別再自我感動了！一個不回你訊息的人，他的沈默就是答案。<br>【5-25s】對鏡頭直述。口播：卑微換不來愛情，只能換來輕視。與其花時間去追一匹馬，不如花時間去種草。等到春暖花開，馬自然會回來。<br>【25-30s】自信微笑。口播：關注我，讓你的人生不再卑微。",
-            "Confident entrepreneur in a bright minimalist office, breaking a chain metaphor, high contrast, clean aesthetics, 8k.")
+# 依據圖片內容填充九大板塊
+with row1[0]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>1. 使用情境</div>定義用戶進入 APP 的第一觀感與操作路徑。</div>", unsafe_allow_html=True)
+with row1[1]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>2. 根源痛點</div>自動抓取連結中解決了什麼「賺不到錢」的痛苦。</div>", unsafe_allow_html=True)
+with row1[2]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>3. 使用頻率</div>設計讓用戶每天都要打開 APP 看數據的鉤子。</div>", unsafe_allow_html=True)
 
-        # 方案 3：故事旁白
-        render_factory_output(3, "故事旁白風", 
-            ["聽說他結婚那天，全場都很開心，除了她", "後來的我們，什麼都有了，卻沒有了『我們』", "回憶是座橋，卻是通往寂寞的牢"],
-            "【0-5s】老舊車站畫面。口播：後來的我們，什麼都有了，卻唯獨沒有了我們。<br>【5-25s】交錯剪輯過去與現在。口播：聽說他結婚那天，新郎不是我，但我卻笑得最開心。因為看到傷害過我的女孩，找了一個比我更差的人。最好的報復，是徹底遺忘。<br>【25-30s】夕陽落下。口播：點讚這份解脫，送給正在受傷的你。",
-            "Old railway station at sunset, vintage film style, emotional storytelling visuals, nostalgic lighting, 8k.")
+with row2[0]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>4. 回訪觸發</div>結合推播系統，提醒用戶今日爆款基因已更新。</div>", unsafe_allow_html=True)
+with row2[1]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>5. 收費觸發</div>在腳本生成關鍵點，置入付費轉化邏輯。</div>", unsafe_allow_html=True)
+with row2[2]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>6. 牽引能力</div>AI 自動優化文案，將流量精準牽引至私域。</div>", unsafe_allow_html=True)
 
-        # 方案 4：技術拆解
-        render_factory_output(4, "技術獲客風", 
-            ["40天賺28萬的底層邏輯", "高單價 Offer 定價公式", "如何讓客戶主動排隊送錢？"],
-            "【0-5s】展示三層漏斗圖。口播：高手怎麼做內容？吸睛短片、教育長片、轉化動態，缺一不可！<br>【5-25s】Offer三支柱。口播：一個讓市場無法拒絕的提案，核心在於把風險轉移到自己身上。當客戶覺得不買是他的損失，成交就是順理成章。<br>【25-30s】留言引導。口播：留言區扣『666』解鎖完整模型。",
-            "Futuristic digital funnel with golden data flowing through it, high-tech finance style, professional lighting, 8k.")
-
-        # 方案 5：治癒救贖
-        render_factory_output(5, "治癒救贖風", 
-            ["總有一束光，是為你而亮的", "你值得被全世界溫柔對待", "錯過的不是遺憾，是為了讓更好的出現"],
-            "【0-5s】手握熱咖啡冒氣。口播：不管你現在經歷什麼，請相信，這世上總有一束光是為你而亮的。<br>【5-25s】溫暖畫面。口播：錯過的不是遺憾，是為了讓更好的出現。你要等，等那個眼裡全是你的男孩子，等那個能看穿你所有委屈的人。<br>【25-30s】溫暖文字。口播：轉發給最好的閨蜜，告訴她：你值得被愛。",
-            "Warm golden hour sunlight, a cup of coffee on a wooden table, soft focus background, peaceful and hopeful mood, 8k.")
+with row3[0]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>7. 門檻行動</div>設定用戶最低參與成本，一鍵複製腳本。</div>", unsafe_allow_html=True)
+with row3[1]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>8. 依賴風險</div>建立數據護城河，讓用戶習慣你的 AI 模型。</div>", unsafe_allow_html=True)
+with row3[2]:
+    st.markdown("<div class='strategy-card'><div class='core-title'>9. 停止訊號</div>智能監控內容飽和度，提醒更換賽道。</div>", unsafe_allow_html=True)
 
 st.divider()
-st.caption("© 2026 李大哥 AI 戰略研究所 | Hermes 滿配自動化系統")
+st.caption("© 2026 李大哥 AI 戰略研究所 | 商業版權所有")
