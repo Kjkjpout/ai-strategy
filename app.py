@@ -1,90 +1,89 @@
 import streamlit as st
 import time
 
-# 設定網頁標題與風格
+# --- 核心配置與 UI 注入 ---
 st.set_page_config(page_title="AI Viral Master Pro", layout="wide")
 
-# 強化的專業簡約科技感 CSS
+# 強化的視覺 CSS：確保文字全白、高對比、科技感
 st.markdown("""
     <style>
-    /* 全局背景 */
-    .stApp {
-        background-color: #0B0E14;
-    }
-    /* 玻璃擬態卡片 */
-    .video-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(0, 242, 234, 0.3);
+    .stApp { background-color: #0B0E14; }
+    /* 卡片容器 */
+    .viral-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid #00F2EA;
         border-radius: 15px;
-        padding: 20px;
+        padding: 25px;
         margin-bottom: 20px;
     }
-    /* 螢光科技感標題 */
-    h1, h2, h3 {
-        color: #00F2EA !important;
-        font-family: 'Inter', sans-serif;
-    }
-    /* 標籤樣式 */
-    .hook-tag {
-        background-color: #FF2E63;
-        color: white;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 12px;
+    /* 強制白色文字 */
+    .white-text { color: #FFFFFF !important; font-size: 18px; line-height: 1.6; }
+    .neon-text { color: #00F2EA !important; font-weight: bold; font-size: 20px; }
+    .hook-label { 
+        background-color: #FF2E63; 
+        color: white !important; 
+        padding: 5px 15px; 
+        border-radius: 50px; 
         font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
     }
+    /* 標題加強 */
+    .section-header { color: #FFFFFF !important; border-left: 5px solid #00F2EA; padding-left: 15px; margin: 30px 0 20px 0; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚡ AI Viral Master Pro")
-st.markdown("#### 專業級短影音爆款基因分析與全自動生產系統")
+st.markdown("<h1 style='color:#00F2EA;'>⚡ AI Viral Master Pro</h1>", unsafe_allow_html=True)
 
-# 輸入區重設
-with st.container():
-    col_input, col_btn = st.columns([4, 1])
-    with col_input:
-        url = st.text_input("", placeholder="請貼入爆款影片連結 (TikTok / YouTube / IG)...", label_visibility="collapsed")
-    with col_btn:
-        process_btn = st.button("開始深度解析", use_container_width=True)
+url = st.text_input("", placeholder="請貼入影片連結...", label_visibility="collapsed")
 
-if process_btn and url:
-    with st.spinner("🚀 正在解析全球熱門數據庫，提取爆款基因..."):
-        time.sleep(1.5)
-        
-        # --- 爆款分析區 ---
-        st.subheader("🎯 爆款邏輯解析 (Viral Logic)")
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown('<div class="video-card"><b>核心鉤子 (Hook)</b><br><span style="color:#00F2EA">負面預期逆轉</span><br><small>利用「你以為...其實...」觸發大腦好奇心</small></div>', unsafe_allow_html=True)
-        with c2:
-            st.markdown('<div class="video-card"><b>視覺節奏 (Pacing)</b><br><span style="color:#00F2EA">0.8s 極速轉場</span><br><small>高頻率畫面切換，強制維持注意力</small></div>', unsafe_allow_html=True)
-        with c3:
-            st.markdown('<div class="video-card"><b>情緒價值 (Value)</b><br><span style="color:#00F2EA">獲得感 + 焦慮緩解</span><br><small>精準打中創業者對流量的渴望</small></div>', unsafe_allow_html=True)
+if st.button("🚀 開始分析並生成 5 套爆款方案", use_container_width=True):
+    with st.spinner("正在提取數據並撰寫 30 秒腳本..."):
+        time.sleep(1)
 
-        st.divider()
+        st.markdown("<h2 class='section-header'>🎬 5 套爆款標題與 30 秒詳細腳本</h2>", unsafe_allow_html=True)
 
-        # --- 五條爆款腳本展示 ---
-        st.subheader("🎬 定製化 AI 爆款腳本 (30s)")
-        
-        scripts = [
-            {"title": "認知差反擊篇", "hook": "「為什麼你每天發片卻沒流量？因為你第一秒就錯了！」", "content": "拆解大數據底層邏輯，3個動作讓權重翻倍。"},
-            {"title": "利益誘惑篇", "hook": "「普通人翻身的最後機會，2026年AI全自動化變現路徑曝光！」", "content": "展示工具自動運行畫面，強調低門檻高回報。"},
-            {"title": "恐懼驅動篇", "hook": "「再不學會這個工具，你的帳號將在下個月徹底被限流！」", "content": "對比新舊算法差異，導向我們的AI解決方案。"},
-            {"title": "實操揭秘篇", "hook": "「這是我用 10 秒鐘分析出來的爆款密碼，完全免費分享。」", "content": "螢幕錄製展示 APP 操作過程，建立信任感。"},
-            {"title": "成功案例篇", "hook": "「三個月漲粉百萬，這套腳本公式到底有多猛？」", "content": "快速展示數據後台，最後引導下載 APP。"}
+        # 這裡就是你要的：清晰的標題、30秒腳本、純白文字
+        scripts_data = [
+            {
+                "title": "標題：為什麼你的流量總是卡在 500？",
+                "hook": "你以為是內容不好？錯！是因為你沒過大數據的門檻！",
+                "script": "00-05s：[視覺] 快速切換多張低點讚截圖，配沉重BGM。\n05-20s：[教學] 展示 AI 分析後的後台曲線，解釋『完播率』公式。\n20-30s：[行動] 點擊下方，我把這套 AI 爆款模板發給你。"
+            },
+            {
+                "title": "標題：普通人翻身的最後一個紅利窗口",
+                "hook": "2026年，不會用 AI 生產內容的人將被徹底淘汰！",
+                "script": "00-05s：[視覺] 科技感隧道轉場，配節奏感極強的 Bass 音。\n05-20s：[內容] 展示 AI 10 秒產出 5 支影片的全過程，震撼視覺。\n20-30s：[行動] 關注我，帶你掌握全自動化內容工廠。"
+            },
+            {
+                "title": "標題：別再自己剪片了！AI 幫你做！",
+                "hook": "我用 30 秒做完了你 3 小時的工作量，而且更火！",
+                "script": "00-05s：[視覺] 分屏對比：左邊手忙腳亂，右邊一鍵生成。\n05-20s：[核心] 快速演示 APP 功能介面，標注關鍵分析點。\n20-30s：[行動] 私訊『AI』，領取工具內測名額。"
+            },
+            {
+                "title": "標題：短影音爆紅的『底層公式』曝光",
+                "hook": "所有熱門影片都逃不過這 3 秒的邏輯控制！",
+                "script": "00-05s：[視覺] 特寫爆款標題，配合碎裂特效。\n05-20s：[知識] 拆解 Hook -> Story -> CTA 的黃金比例結構。\n20-30s：[行動] 點贊收藏，下一支影片你就照著這個拍！"
+            },
+            {
+                "title": "標題：揭秘！那些百萬大號不肯說的秘密",
+                "hook": "他們不是運氣好，而是用了這套數據分析工具！",
+                "script": "00-05s：[視覺] 滿螢幕的點讚和評論動畫，氛圍感拉滿。\n05-20s：[揭秘] 展示競爭對手帳號的深度分析數據報告。\n20-30s：[行動] 想看更多數據？主頁連結見。"
+            }
         ]
 
-        for i, s in enumerate(scripts):
-            with st.expander(f"🔥 方案 {i+1}：{s['title']}"):
-                col_s1, col_s2 = st.columns([1, 2])
-                with col_s1:
-                    st.error(f"🪝 黃金 3 秒鉤子：\n\n {s['hook']}")
-                with col_s2:
-                    st.info(f"📝 30秒腳本核心：\n\n {s['content']}")
-                    st.caption("⏱️ 0-3s: Hook | 3-18s: Value Content | 18-30s: CTA (Call to Action)")
-
-        # --- 影片生產狀態 ---
-        st.subheader("⚙️ 影片全自動生產與分發進度")
-        st.write("已調用渲染引擎，預估產出時間：2分30秒")
-        st.progress(45)
-        st.caption("分發渠道預約：TikTok (✓) | Reels (✓) | YouTube Shorts (✓)")
+        for i, item in enumerate(scripts_data):
+            st.markdown(f"""
+            <div class="viral-card">
+                <div class="neon-text">方案 {i+1}：{item['title']}</div>
+                <hr style="border: 0.5px solid rgba(255,255,255,0.1)">
+                <div class="hook-label">黃金 3 秒鉤子</div>
+                <div class="white-text" style="font-weight: bold; margin-bottom: 15px;">{item['hook']}</div>
+                <div style="color: #00F2EA; font-size: 14px; margin-bottom: 5px;">📜 30 秒詳細執行腳本：</div>
+                <div class="white-text" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; white-space: pre-wrap;">{item['script']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # 每一個方案下方預留生成按鈕
+            if st.button(f"🛠️ 點擊生成方案 {i+1} 的 AI 影片", key=f"gen_{i}"):
+                st.write("⏳ 正在調用 API 接口... 請稍候")
