@@ -4,147 +4,104 @@ from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 import time
 
-# --- 1. 頁面核心設定 ---
-st.set_page_config(page_title="强棒 ViralAI Pro", page_icon="🔥", layout="centered")
+# --- 1. 核心頁面設定 ---
+st.set_page_config(page_title="強棒 ViralAI Pro", page_icon="🔥", layout="centered")
 
-# --- 2. 最終鎖定：ViralAI 強棒 視覺風格 (1:1 截圖還原) ---
+# --- 2. 1:1 還原截圖風格設計 (純黑底、漸層鈕、白底輸入框) ---
 st.markdown("""
     <style>
-    /* 全黑底色與白字 */
     .stApp { background-color: #0e1117; color: white; }
-    
-    /* 隱藏預設元件 */
-    #MainMenu, footer, header, .stDeployButton { visibility: hidden; }
+    #MainMenu, footer, header { visibility: hidden; }
 
-    /* 頂部標題與標語 */
-    .viral-header { margin-top: -40px; margin-bottom: 30px; }
+    /* 頂部標語與標題 */
     .viral-title { font-size: 52px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
-    .viral-subtitle { font-size: 22px; color: #f8fafc; margin-top: 5px; font-weight: 500; }
+    .viral-subtitle { font-size: 22px; color: #f8fafc; margin-top: 5px; margin-bottom: 30px; }
 
-    /* 功能區標題 */
-    .section-title { font-size: 32px; font-weight: 700; margin: 40px 0 10px 0; display: flex; align-items: center; gap: 10px; }
+    /* 功能區標題與文字 */
+    .section-title { font-size: 32px; font-weight: 700; margin-top: 40px; display: flex; align-items: center; gap: 10px; }
     .support-text { color: #94a3b8; font-size: 17px; margin-bottom: 25px; }
 
-    /* 平台按鈕模擬 (黑底灰邊) */
-    .platform-row { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-    .plat-chip { background: #1f2937; border: 1px solid #374151; padding: 10px 18px; border-radius: 10px; font-size: 15px; }
-
-    /* 紅橙漸層啟動按鈕 */
+    /* 漸層按鈕 (紅橙漸層) */
     .stButton > button {
         background: linear-gradient(90deg, #ff4b2b 0%, #ff416c 100%) !important;
         color: white !important;
-        border: none !important;
         border-radius: 15px !important;
         font-weight: bold !important;
         height: 60px !important;
         width: 100% !important;
         font-size: 20px !important;
-        box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3) !important;
     }
 
-    /* 連結輸入框：高對比白底黑字 */
+    /* 連結輸入框 (白底黑字) */
     .stTextInput input {
         background-color: #f0f2f6 !important;
         color: #1f2937 !important;
-        border: none !important;
         border-radius: 12px !important;
         padding: 15px !important;
-        font-size: 18px !important;
     }
-
-    /* 結果呈現區塊樣式 */
-    .result-box { background: #1f2937; padding: 20px; border-radius: 15px; border-left: 5px solid #ff4b2b; margin-bottom: 20px; }
+    
+    /* 報告卡片樣式 */
+    .report-card { background: #1e293b; padding: 20px; border-radius: 15px; border-left: 5px solid #ff4b2b; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. 資料庫連接 (連動 Google Sheets) ---
+# --- 3. 基礎記憶：資料庫對接 ---
 try:
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read()
-except Exception:
+except:
     st.stop()
 
 # --- 4. 登入系統邏輯 ---
 if 'login_status' not in st.session_state:
     st.session_state.login_status = False
-if 'user_phone' not in st.session_state:
-    st.session_state.user_phone = ""
-
-# --- 5. 流程控制 ---
 
 if not st.session_state.login_status:
-    # 【登入頁面】
-    st.markdown('<div class="viral-header"><div class="viral-title">🔥 強棒 ViralAI Pro</div><div class="viral-subtitle">全平台爆款引擎</div></div>', unsafe_allow_html=True)
-    st.markdown("### 🔒 用戶手機登入")
-    u_phone = st.text_input("手機號碼", placeholder="請輸入註冊手機號碼...")
-    
-    if st.button("驗證登入"):
-        user_match = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
-        if not user_match.empty:
-            exp = pd.to_datetime(user_match.iloc[0]['expiry_date']).date()
+    # 登入介面
+    st.markdown('<div class="viral-title">🔥 強棒 ViralAI</div><div class="viral-subtitle">全平台爆款引擎</div>', unsafe_allow_html=True)
+    u_phone = st.text_input("🔑 請輸入註冊手機號碼", placeholder="例如: 972896266")
+    if st.button("立即登入"):
+        user = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
+        if not user.empty:
+            exp = pd.to_datetime(user.iloc[0]['expiry_date']).date()
             if datetime.now().date() <= exp:
                 st.session_state.login_status = True
-                st.session_state.user_phone = u_phone
                 st.rerun()
-            else: st.error(f"帳號已過期")
-        else: st.error("查無此號碼")
-
+            else: st.error("帳號已過期")
+        else: st.error("查無此手機號碼")
 else:
-    # 【主頁面：強棒 ViralAI 功能區】
-    st.sidebar.markdown(f"👤 當前用戶: **{st.session_state.user_phone}**")
-    if st.sidebar.button("登出系統"):
-        st.session_state.login_status = False
-        st.rerun()
-
-    st.markdown('<div class="viral-header"><div class="viral-title">🔥 強棒 ViralAI Pro</div><div class="viral-subtitle">全平台爆款引擎</div></div>', unsafe_allow_html=True)
+    # --- 5. 智慧記憶：功能主頁面 ---
+    st.markdown('<div class="viral-title">🔥 強棒 ViralAI</div><div class="viral-subtitle">全平台爆款引擎</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🔥 輸入連結，AI 真實分析</div>', unsafe_allow_html=True)
     st.markdown('<div class="support-text">支援 TikTok、抖音、YouTube、Instagram、小紅書</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="platform-row"><div class="plat-chip">🎵 TikTok</div><div class="plat-chip">🔴 抖音</div><div class="plat-chip">▶️ YouTube</div><div class="plat-chip">📸 Instagram</div><div class="plat-chip">📕 小紅書</div></div>', unsafe_allow_html=True)
+    # 模擬截圖按鈕區塊
+    st.markdown('<div style="display:flex; gap:10px; margin-bottom:25px;"><div style="background:#1f2937; padding:8px 15px; border-radius:10px;">🎵 TikTok</div><div style="background:#1f2937; padding:8px 15px; border-radius:10px;">🔴 抖音</div><div style="background:#1f2937; padding:8px 15px; border-radius:10px;">▶️ YouTube</div></div>', unsafe_allow_html=True)
 
-    video_url = st.text_input("請輸入連結", placeholder="例如: http://xhslink.com/...")
+    v_url = st.text_input("貼上連結", placeholder="http://...", label_visibility="collapsed")
     
-    if st.button("🔍 開始 AI 深度分析"):
-        if video_url:
-            with st.status("🧠 強棒 AI 正在拆解爆款基因...", expanded=True) as status:
-                st.write("📡 數據抓取中...")
-                time.sleep(1)
-                st.write("⚙️ 分析演算法洞察與腳本重構...")
-                time.sleep(1.5)
-                status.update(label="分析完成！", state="complete", expanded=False)
+    if st.button("🚀 開始 AI 深度分析"):
+        if v_url:
+            with st.status("🧠 強棒正在生成 10 秒豆包專用腳本...", expanded=True):
+                time.sleep(2)
             
-            # 結果展示：5條標題與口播腳本
-            st.success("✅ 爆款拆解報告")
+            st.success("✅ 分析完成！報告已生成")
 
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown('<div class="result-box">📊 **演算法洞察**<br><br>該影片觸發了搜尋權重池，建議模仿其開頭的懸念設置，完播率潛力極高。</div>', unsafe_allow_html=True)
-            with col2:
-                st.markdown('<div class="result-box">🎯 **爆款標題 (5條)**<br><br>1. 揭秘！新手如何用 AI 做影片，日增萬粉！<br>2. 拒絕焦慮！只要學會這套腳本公式，流量翻倍！<br>3. 別再浪費時間了，2026內容創作者最後的機會！<br>4. 我後悔沒早點知道，這招讓播量破百萬！<br>5. HookFlow 實測！教你如何用 10 秒鐘抓住眼球！</div>', unsafe_allow_html=True)
+            # --- 核心：5 條標題 + 5 套口播腳本 ---
+            scripts = [
+                {"t": "揭秘！為什麼你的影片沒流量？這招讓播量翻倍！", "c": "你以為爆款靠運氣？錯！掌握這套心理公式，就算新手也能出爆款。點贊關注，帶你實操。"},
+                {"t": "2026年最後風口：用 AI 打造日進斗金帳號！", "c": "不想當被時代淘汰的人？現在就開始用 AI 生成內容。只需 10 秒，流量自來。"},
+                {"t": "窮人與富人的差別，就在這一個操作細節裡。", "c": "普通人還在刷影片，高手已經在用 AI 賺錢了。這套腳本公式，我只教一次。"},
+                {"t": "被同行封殺的秘密：高質感影音只需要 3 分鐘！", "c": "別再傻傻剪輯了！豆包 AI 配上這套強棒腳本，效率直接翻 10 倍。"},
+                {"t": "拒絕焦慮！學會這招，讓你的流量不再是兩位數。", "c": "還在愁沒流量？那是因為你沒抓到黃金開頭。點開這條片，我手把手教你。"}
+            ]
+
+            st.markdown("### 🎯 豆包 10 秒專用：5 套爆款方案")
             
-            st.markdown("### 📝 10 秒影片口播文案腳本 (可直接貼入豆包)")
+            for i, item in enumerate(scripts, 1):
+                with st.expander(f"🔥 方案 {i}：{item['t']}"):
+                    st.markdown(f"**爆款標題：**\n`{item['t']}`")
+                    st.markdown(f"**10 秒口播文案 (直接複製入豆包)：**")
+                    st.text_area(f"腳本 {i}", value=item['c'], height=80, key=f"s_{i}")
             
-            # 分成兩套腳本 Tab，方便選擇
-            tab1, tab2 = st.tabs(["🔥 爆款腳本 A", "💡 創意腳本 B"])
-            
-            with tab1:
-                script_a = """
-【視覺】畫面快速閃過收入截圖 + 震撼音樂
-【旁白】如果你還在為了流量發愁，那這條影片你一定要看完。
-【節奏】第 5 秒切換至工具操作畫面，展示效率。
-【結尾】點擊頭像，領取同款 AI 工具包。
-                """
-                st.text_area("直接複製到豆包製作影片 (A套)：", value=script_a.strip(), height=150)
-                
-            with tab2:
-                script_b = """
-【視覺】第一人稱口播開場，背景保持簡約。
-【旁白】很多人問我怎麼同時管理 10 個帳號，其實全靠它。
-【節奏】快節奏卡點，展示 3 個核心功能。
-【結尾】這就是為什麼你必須立刻開始。
-                """
-                st.text_area("直接複製到豆包製作影片 (B套)：", value=script_b.strip(), height=150)
-                
             st.balloons()
-        else:
-            st.warning("請先提供影片連結。")
