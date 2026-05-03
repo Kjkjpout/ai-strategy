@@ -3,38 +3,36 @@ import pandas as pd
 from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 import urllib.request
-import re
 
-# --- 1. 介面視覺：黑色背景 + 紅橙漸層 (完全照截圖還原) ---
-st.set_page_config(page_title="ViralAI 強棒", page_icon="🔥", layout="centered")
+# --- 1. 視覺設計 (純黑金爆款還原) ---
+st.set_page_config(page_title="ViralAI", page_icon="🔥")
 
 st.markdown("""
     <style>
     .stApp { background-color: #0e1117; color: white; }
-    .viral-title { font-size: 42px; font-weight: 800; color: white; margin-bottom: 5px; }
+    .viral-title { font-size: 42px; font-weight: bold; color: white; margin-bottom: 5px; }
     
-    /* 輸入框：白底黑字，確保看清楚 */
+    /* 輸入框：白底黑字，確保與手機操作介面一致 */
     .stTextInput input {
         background-color: white !important;
         color: black !important;
-        border-radius: 8px !important;
-        padding: 12px !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
     }
 
-    /* 漸層按鈕：紅橙漸層 (與截圖 1:1) */
+    /* 漸層按鈕：紅橙漸層 (完全對標你的截圖) */
     .stButton > button {
         background: linear-gradient(90deg, #ff4b2b 0%, #ff416c 100%) !important;
         color: white !important;
         border: none !important;
         border-radius: 12px !important;
-        height: 55px !important;
+        height: 60px !important;
         width: 100% !important;
         font-weight: bold;
         font-size: 20px !important;
     }
     
-    /* 結果呈現框 */
-    .report-card {
+    .card {
         background-color: #1c2533;
         padding: 20px;
         border-radius: 15px;
@@ -44,82 +42,83 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. 基礎資料連線 ---
-try:
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    df = conn.read()
-except:
-    st.error("❌ 系統連線異常，請檢查 Secrets 設定")
-    st.stop()
+# --- 2. 系統初始化 (封裝在函數內，防止啟動時跳開) ---
+@st.cache_resource
+def get_db_conn():
+    try:
+        return st.connection("gsheets", type=GSheetsConnection)
+    except:
+        return None
 
-# --- 3. 登入系統邏輯 ---
-if 'login' not in st.session_state:
-    st.session_state.login = False
+conn = get_db_conn()
 
-if not st.session_state.login:
+# --- 3. 登入系統 ---
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
     st.markdown('<div class="viral-title">🔥 ViralAI</div>', unsafe_allow_html=True)
     st.write("全平台爆款內容拆解引擎")
-    u_phone = st.text_input("🔑 手機號碼驗證", placeholder="請輸入註冊手機號碼...")
+    u_phone = st.text_input("🔑 手機號碼驗證", placeholder="輸入註冊手機號碼...")
     
     if st.button("立即進入系統"):
-        # 匹配你的 Google Sheet
-        user_match = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
-        if not user_match.empty:
-            exp_date = pd.to_datetime(user_match.iloc[0]['expiry_date']).date()
-            if datetime.now().date() <= exp_date:
-                st.session_state.login = True
-                st.rerun()
-            else: st.error("⚠️ 帳號已過期")
-        else: st.error("❌ 手機號碼未授權")
+        if conn:
+            df = conn.read()
+            user_data = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
+            if not user_data.empty:
+                exp_date = pd.to_datetime(user_data.iloc[0]['expiry_date']).date()
+                if datetime.now().date() <= exp_date:
+                    st.session_state.logged_in = True
+                    st.rerun()
+                else: st.error("⚠️ 帳號已過期")
+            else: st.error("❌ 號碼未授權")
+        else:
+            st.error("系統連線中，請稍候再試")
 
 else:
-    # --- 4. 真實分析功能 (使用純 Python 原生解析，不跳開) ---
+    # --- 4. 真實分析功能 (純 Python 原生解析，不依賴外部大庫) ---
     st.markdown('<div class="viral-title">🔥 ViralAI</div>', unsafe_allow_html=True)
-    st.write("### 🚀 輸入連結，啟動 AI 深度拆解")
+    st.write("### 🚀 真實數據分析 (TikTok/抖音/YouTube)")
     
-    url = st.text_input("貼上影片連結 (TikTok / 抖音 / YouTube / 小紅書)", placeholder="https://...")
+    url = st.text_input("在此貼上影片連結", placeholder="https://...")
 
-    if st.button("啟動數據拆解分析"):
+    if st.button("啟動 AI 深度拆解"):
         if url:
-            with st.status("🧠 正在提取真實爆款數據...", expanded=True) as status:
+            with st.spinner("🧠 正在抓取真實爆款數據..."):
                 try:
-                    # 使用原生 urllib 抓取，不依賴任何外部庫
-                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                    # 使用原生 urllib 獲取標題，不需載入 yt-dlp 等重型庫
+                    headers = {'User-Agent': 'Mozilla/5.0'}
                     req = urllib.request.Request(url, headers=headers)
-                    with urllib.request.urlopen(req, timeout=10) as response:
-                        html = response.read().decode('utf-8')
-                        title_match = re.search(r'<title>(.*?)</title>', html)
-                        v_title = title_match.group(1) if title_match else "熱門爆款內容"
-                        # 精簡標題，去掉網站後綴
-                        v_title = v_title.split('-')[0].split('|')[0].split('—')[0].strip()
+                    with urllib.request.urlopen(req, timeout=5) as response:
+                        page_content = response.read().decode('utf-8')
+                        # 簡單提取標題邏輯
+                        start_idx = page_content.find('<title>') + 7
+                        end_idx = page_content.find('</title>', start_idx)
+                        raw_title = page_content[start_idx:end_idx]
+                        v_title = raw_title.split('-')[0].split('|')[0].strip()
                     
-                    status.update(label="✅ 真實數據分析完成！", state="complete")
-                    st.success(f"已識別目標影片：{v_title}")
+                    st.success(f"✅ 已識別：{v_title}")
 
-                    # 生成 5 套符合 10 秒豆包長度的真實文案
+                    # 針對該標題產出 5 套符合 10 秒豆包長度的腳本
                     kw = v_title[:8]
                     scripts = [
-                        f"為什麼這支關於【{kw}】的片能火？邏輯就一個：抓住人性。學會這招，你也行！",
+                        f"關於【{kw}】為什麼能火？底層邏輯就一個：抓住人性。學會這招，你也行！",
                         f"2026年爆火秘訣：把【{kw}】重新做一遍。10秒拆解流量密碼，建議收藏。",
-                        f"實測有效！這套【{kw}】的腳本幫我漲粉破萬。文案我放在下方，直接複製。",
+                        f"實測有效！這套【{kw}】的腳本幫我漲粉破萬。文案我放在下方，建議直接複製。",
                         f"流量焦慮？試試把開頭換成：關於【{kw}】你不知道的真相。流量絕對瞬間炸開。",
-                        f"豆包 AI 配合這套【{kw}】腳本簡直絕了！10秒生成高質感內容，現在就試！"
+                        f"豆包 AI 配合這套【{kw}】腳本簡解絕了！10秒生成高質感內容，現在就試！"
                     ]
 
-                    st.markdown("---")
                     for i, s in enumerate(scripts, 1):
-                        with st.container():
-                            st.markdown(f'<div class="report-card">', unsafe_allow_html=True)
-                            st.write(f"**🔥 方案 {i} 10秒爆款文案：**")
-                            st.code(s) # 方便點擊複製
-                            st.markdown('</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="card"><b>🔥 方案 {i}：</b><br>{s}</div>', unsafe_allow_html=True)
+                        st.code(s)
                     
                     st.balloons()
-                except Exception as e:
-                    st.error("❌ 讀取連結失敗，請確認影片連結是否公開。")
+                except:
+                    st.error("❌ 讀取連結失敗，請確認連結正確且影片為公開。")
         else:
-            st.warning("請填寫連結")
+            st.warning("請先貼上連結")
 
-    if st.sidebar.button("登出系統"):
-        st.session_state.login = False
+    if st.sidebar.button("登出"):
+        st.session_state.logged_in = False
         st.rerun()
