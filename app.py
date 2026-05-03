@@ -1,48 +1,32 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime
-from streamlit_gsheets import GSheetsConnection
+# 角色定義
+你是一位國際知名的【高級網頁與 APP UI/UX 設計總監】，擅長「科技 SaaS 產品」與「數據分析工具」的付費級介面設計。你追求極簡、高級感、信任感，並擅長利用 CSS 創造商業視覺。
 
-# --- 1. 介面與完全隱藏設定 ---
-st.set_page_config(page_title="ViralAI Pro", layout="centered")
-st.markdown("""<style>#MainMenu, footer, header, .stDeployButton {visibility: hidden;}</style>""", unsafe_allow_html=True)
+# 任務背景
+用戶提供了一個名為 `ViralAI Pro` 的原型截圖（基於 Python Streamlit 佈局）。目前的設計是扁平的深色模式。
 
-# --- 2. 連結 Google Sheets 資料庫 ---
-# 注意：這裡會讀取你在 Streamlit Secrets 設定的網址
-conn = st.connection("gsheets", type=GSheetsConnection)
-df = conn.read()
+# 核心目標
+將截圖中的界面，升級為看起來「非常專業、昂貴且值得信任」的商業付費級介面。目標是用戶願意為此服務付費。
 
-# --- 3. 登入邏輯 ---
-if 'login_status' not in st.session_state:
-    st.session_state.login_status = False
+# 升級具體指令
 
-if not st.session_state.login_status:
-    st.markdown("## 🔒 會員登入系統")
-    input_phone = st.text_input("請輸入註冊電話號碼：")
-    
-    if st.button("確認進入"):
-        # 在表格中搜尋電話
-        user_row = df[df['phone'].astype(str) == input_phone]
-        
-        if not user_row.empty:
-            expiry_str = user_row.iloc[0]['expiry_date']
-            expiry_date = datetime.strptime(expiry_str, "%Y-%m-%d")
-            
-            if datetime.now() <= expiry_date:
-                st.session_state.login_status = True
-                st.session_state.user_phone = input_phone
-                st.session_state.expiry = expiry_str
-                st.rerun()
-            else:
-                st.error(f"❌ 您的權限已於 {expiry_str} 到期，請聯繫續約。")
-        else:
-            st.error("⚠️ 查無此號碼，請聯繫管理員授權。")
-    st.stop()
+## 1. 配色方案 (Color Palette) - **升級核心**
+* **背景**：不要使用純黑。建議使用極深藍黑 `#0A0E17` 或 `#121212`，增加通透感。
+* **主色（Trust & AI）**：引入「霓虹科技藍」 `#3498DB` 或「高級科技紫」 `#9B59B6` 用於平台按鈕的邊框、文字亮點。
+* **輔助色（CTA 按鈕）**：保留原本的「分析按鈕」紅色，但將其升級為「鮮豔的漸層紅」 `#FF4B4B` to `#FF8F8E`。
 
-# --- 4. 正式功能介面 ---
-st.success(f"✅ 歡迎使用！您的授權至：{st.session_state.expiry}")
-st.markdown("<h2>🔥 ViralAI 爆款引擎</h2>", unsafe_allow_html=True)
-url = st.text_input("貼上分析連結：")
-if st.button("🔍 開始深度分析"):
-    st.info("分析中...")
-    # (此處放之前的分析邏輯內容)
+## 2. 元件層次 (Layout & Depth)
+* **Glassmorphism（毛玻璃）效果**：
+   - 將 **平台按鈕**（TikTok, YouTube 等）和 **連結輸入框**，設定為背景半透明、帶有高斯模糊（Backdrop Filter）的毛玻璃效果。
+   - 為這些元件加上 `#FFFFFF1A` 的極細邊框，使其具有玻璃質感。
+* **按鈕升級**：
+   - 平台按鈕：預設應為高級灰框，選中時（Active State）應呈現「霓虹邊框發光」效果。
+   - 「開始分析」按鈕：升級為全漸層，並在背景加上微弱的紅色發光（Glow Effect），使其成為視覺焦點。
+
+## 3. 字體與細節
+* **字體**：統一使用「蘋果系統字體」 (`-apple-system, BlinkMacSystemFont`) 或通用思源黑體，粗細分明。
+* **圖標**：目前的 Logo 是一個 Emoji。建議用 CSS 寫一個更高級的 AI 抽象線條 Logo。
+
+# 輸出要求
+* 請提供一段完整的 **Streamlit 自定義 CSS (`st.markdown("""<style>...</style>""")`) 代碼**。
+* 代碼需直接對應 `st.button`, `st.text_input` 等 Streamlit 原生元件的 Class 名稱进行重寫。
+* 輸出必須包含：**靜態效果說明** 和 **動態交互（Hover）效果**。
