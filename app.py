@@ -1,32 +1,58 @@
-# 角色定義
-你是一位國際知名的【高級網頁與 APP UI/UX 設計總監】，擅長「科技 SaaS 產品」與「數據分析工具」的付費級介面設計。你追求極簡、高級感、信任感，並擅長利用 CSS 創造商業視覺。
+import streamlit as st
 
-# 任務背景
-用戶提供了一個名為 `ViralAI Pro` 的原型截圖（基於 Python Streamlit 佈局）。目前的設計是扁平的深色模式。
+# 1. 介面基礎設定
+st.set_page_config(page_title="ViralAI Pro", layout="centered")
 
-# 核心目標
-將截圖中的界面，升級為看起來「非常專業、昂貴且值得信任」的商業付費級介面。目標是用戶願意為此服務付費。
+# 2. 高級美工 CSS (這一段是讓介面變高級的關鍵)
+st.markdown("""
+    <style>
+    /* 設定深藍色背景 */
+    .stApp {
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+    }
+    
+    /* 輸入框毛玻璃質感 */
+    .stTextInput > div > div > input {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 10px !important;
+    }
 
-# 升級具體指令
+    /* 開始分析按鈕：紅色漸層發光 */
+    .stButton > button {
+        background: linear-gradient(90deg, #FF4B2B 0%, #FF416C 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 15px 0px !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        font-weight: bold !important;
+        box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-## 1. 配色方案 (Color Palette) - **升級核心**
-* **背景**：不要使用純黑。建議使用極深藍黑 `#0A0E17` 或 `#121212`，增加通透感。
-* **主色（Trust & AI）**：引入「霓虹科技藍」 `#3498DB` 或「高級科技紫」 `#9B59B6` 用於平台按鈕的邊框、文字亮點。
-* **輔助色（CTA 按鈕）**：保留原本的「分析按鈕」紅色，但將其升級為「鮮豔的漸層紅」 `#FF4B4B` to `#FF8F8E`。
+# 3. 畫面顯示內容
+st.title("🔥 ViralAI")
+st.write("全平台爆款引擎 - AI 驅動深度分析")
 
-## 2. 元件層次 (Layout & Depth)
-* **Glassmorphism（毛玻璃）效果**：
-   - 將 **平台按鈕**（TikTok, YouTube 等）和 **連結輸入框**，設定為背景半透明、帶有高斯模糊（Backdrop Filter）的毛玻璃效果。
-   - 為這些元件加上 `#FFFFFF1A` 的極細邊框，使其具有玻璃質感。
-* **按鈕升級**：
-   - 平台按鈕：預設應為高級灰框，選中時（Active State）應呈現「霓虹邊框發光」效果。
-   - 「開始分析」按鈕：升級為全漸層，並在背景加上微弱的紅色發光（Glow Effect），使其成為視覺焦點。
+# 平台按鈕區
+col1, col2, col3, col4, col5 = st.columns(5)
+with col1: st.button("TikTok")
+with col2: st.button("抖音")
+with col3: st.button("YouTube")
+with col4: st.button("IG")
+with col5: st.button("小紅書")
 
-## 3. 字體與細節
-* **字體**：統一使用「蘋果系統字體」 (`-apple-system, BlinkMacSystemFont`) 或通用思源黑體，粗細分明。
-* **圖標**：目前的 Logo 是一個 Emoji。建議用 CSS 寫一個更高級的 AI 抽象線條 Logo。
+# 輸入框
+url = st.text_input("請輸入影片連結：", placeholder="http://...")
 
-# 輸出要求
-* 請提供一段完整的 **Streamlit 自定義 CSS (`st.markdown("""<style>...</style>""")`) 代碼**。
-* 代碼需直接對應 `st.button`, `st.text_input` 等 Streamlit 原生元件的 Class 名稱进行重寫。
-* 輸出必須包含：**靜態效果說明** 和 **動態交互（Hover）效果**。
+# 分析按鈕
+if st.button("🚀 開始 AI 深度分析"):
+    if url:
+        st.success(f"已接收連結！正在啟動【爆款專家團】進行拆解...")
+        # 這裡之後會放入分析結果
+    else:
+        st.warning("請先輸入連結喔！")
