@@ -4,7 +4,7 @@ from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 import urllib.request
 
-# --- 1. 視覺設計：黑金爆款還原 (對標你的截圖) ---
+# --- 1. 視覺還原：黑金爆款設計 (對標你的截圖) ---
 st.set_page_config(page_title="ViralAI", page_icon="🔥")
 
 st.markdown("""
@@ -20,7 +20,7 @@ st.markdown("""
         padding: 12px !important;
     }
 
-    /* 漸層按鈕：紅橙漸層 (完全還原截圖) */
+    /* 漸層按鈕：紅橙漸層 (完全對標你的截圖) */
     .stButton > button {
         background: linear-gradient(90deg, #ff4b2b 0%, #ff416c 100%) !important;
         color: white !important;
@@ -42,7 +42,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. 登入系統 ---
+# --- 2. 登入系統邏輯 ---
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
@@ -55,9 +55,9 @@ if not st.session_state.logged_in:
         try:
             conn = st.connection("gsheets", type=GSheetsConnection)
             df = conn.read()
-            # 匹配你的資料表中的手機號碼
-            user_data = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
-            if not user_data.empty:
+            # 匹配你的手機號碼 (手機號碼欄位必須叫 phone)
+            user_match = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
+            if not user_match.empty:
                 st.session_state.logged_in = True
                 st.rerun()
             else:
@@ -66,34 +66,34 @@ if not st.session_state.logged_in:
             st.error("系統連線中，請稍候再點擊一次")
 
 else:
-    # --- 3. 分析主功能 (原生技術，絕不跳開) ---
+    # --- 3. 分析主功能 (原生抓取技術，保證不跳開) ---
     st.markdown('<div class="viral-title">🔥 ViralAI</div>', unsafe_allow_html=True)
-    url = st.text_input("貼上影片連結 (TikTok / YouTube / 抖音)", placeholder="https://...")
+    st.write("### 🚀 輸入影片連結，AI 現場拆解")
+    url = st.text_input("貼上連結 (TikTok / YouTube / 抖音)", placeholder="https://...")
 
     if st.button("啟動 AI 深度拆解"):
         if url:
             with st.status("🧠 正在提取真實爆款數據...", expanded=True) as status:
                 try:
-                    # 使用 Python 內建工具抓取，不依賴任何會報錯的外部庫
+                    # 使用 Python 原生工具抓取標題，不需載入報錯的 yt-dlp
                     headers = {'User-Agent': 'Mozilla/5.0'}
                     req = urllib.request.Request(url, headers=headers)
                     with urllib.request.urlopen(req, timeout=5) as response:
-                        html_content = response.read().decode('utf-8', errors='ignore')
-                        # 暴力抓取標題
-                        v_title = html_content.split('<title>')[1].split('</title>')[0]
+                        html = response.read().decode('utf-8', errors='ignore')
+                        v_title = html.split('<title>')[1].split('</title>')[0]
                         v_title = v_title.split('-')[0].split('|')[0].strip()
                     
                     status.update(label="✅ 分析完成", state="complete")
                     st.success(f"已識別：{v_title}")
 
-                    # 生成 5 套 10 秒豆包腳本
+                    # 生成 5 套符合 10 秒豆包長度的腳本
                     kw = v_title[:8]
                     scripts = [
                         f"關於【{kw}】為什麼能火？底層邏輯就一個：抓住人性。學會這招，你也行！",
                         f"2026年爆火秘訣：把【{kw}】重新做一遍。10秒拆解流量密碼，建議收藏。",
                         f"實測有效！這套【{kw}】的腳本幫我漲粉破萬。文案我放在下方，直接複製。",
                         f"流量焦慮？試試把開頭換成：關於【{kw}】你不知道的真相。流量絕對瞬間炸開。",
-                        f"豆包 AI 配合這套【{kw}】腳本簡解絕了！10秒生成高質感內容，現在就試！"
+                        f"豆包 AI 配合這套【{kw}】腳本簡直絕了！10秒生成高質感內容，現在就試！"
                     ]
 
                     for i, s in enumerate(scripts, 1):
@@ -101,6 +101,6 @@ else:
                         st.code(s)
                     st.balloons()
                 except:
-                    st.error("❌ 讀取連結失敗，請檢查連結是否公開。")
+                    st.error("❌ 讀取連結失敗，請確認連結正確且影片為公開狀態。")
         else:
-            st.warning("請先輸入連結")
+            st.warning("請填寫連結")
