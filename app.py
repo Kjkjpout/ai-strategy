@@ -3,14 +3,7 @@ import pandas as pd
 from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 
-# 🛡️ 第一重保險：即使環境安裝延遲，程式也不會報錯跳開
-try:
-    import yt_dlp
-    YTDLP_READY = True
-except ImportError:
-    YTDLP_READY = False
-
-# --- 介面風格還原 (黑金爆款設計) ---
+# --- 1. 介面視覺還原 ---
 st.set_page_config(page_title="ViralAI 強棒", page_icon="🔥")
 
 st.markdown("""
@@ -25,7 +18,6 @@ st.markdown("""
         font-weight: bold !important;
         height: 55px !important;
         width: 100% !important;
-        font-size: 18px !important;
     }
     .result-card {
         background-color: #1c2533;
@@ -37,26 +29,23 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 會員系統 (連接 Google Sheets) ---
+# --- 2. 會員驗證 ---
 try:
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read()
 except Exception:
-    st.error("❌ 系統初始化失敗，請檢查 Secrets 設定。")
+    st.error("❌ 數據庫連線失敗，請檢查 Secrets 設定")
     st.stop()
 
 if 'login' not in st.session_state: st.session_state.login = False
 
 if not st.session_state.login:
     st.markdown('<div class="viral-title">🔥 ViralAI</div>', unsafe_allow_html=True)
-    st.write("全平台爆款內容拆解引擎")
     u_phone = st.text_input("🔑 手機號碼驗證", placeholder="請輸入註冊手機號碼...")
-    
     if st.button("立即進入系統"):
-        # 匹配手機號碼 (對應你的 266 尾號那筆)
-        match = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
-        if not match.empty:
-            exp_date = pd.to_datetime(match.iloc[0]['expiry_date']).date()
+        user_res = df[df['phone'].astype(str).str.strip() == u_phone.strip()]
+        if not user_res.empty:
+            exp_date = pd.to_datetime(user_res.iloc[0]['expiry_date']).date()
             if datetime.now().date() <= exp_date:
                 st.session_state.login = True
                 st.rerun()
@@ -64,28 +53,28 @@ if not st.session_state.login:
         else: st.error("❌ 號碼未授權")
 
 else:
-    # --- 核心功能：真實分析 ---
+    # --- 3. 核心分析功能 (使用動態加載，防止跳開) ---
     st.markdown('<div class="viral-title">🔥 ViralAI</div>', unsafe_allow_html=True)
-    st.write("### 🚀 輸入連結，進行真實數據分析")
-    
+    st.write("### 🚀 輸入連結，進行真實分析")
     url = st.text_input("貼上影片連結 (TikTok/抖音/YouTube/小紅書)", placeholder="http://...")
 
     if st.button("啟動 AI 深度拆解"):
-        if not YTDLP_READY:
-            st.warning("🛠️ 核心分析組件正在安裝中，請等候 30 秒後重新點擊，不要刷新頁面。")
-        elif url:
-            with st.status("🧠 正在抓取數據並分析爆款基因...", expanded=True) as status:
+        if url:
+            with st.status("🧠 正在啟動分析模組...", expanded=True) as status:
                 try:
-                    # 真實抓取標題
+                    # 只有在按按鈕時才匯入，確保環境已經準備好
+                    import yt_dlp 
+                    
+                    status.update(label="📡 正在抓取數據...", state="running")
                     ydl_opts = {'quiet': True, 'no_warnings': True}
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         info = ydl.extract_info(url, download=False)
-                        v_title = info.get('title', '熱門爆款內容')
+                        v_title = info.get('title', '熱門爆款影片')
                     
                     status.update(label="✅ 分析完成！", state="complete")
-                    st.success(f"已識別影片：{v_title}")
+                    st.success(f"已識別：{v_title}")
 
-                    # 根據標題生成的 5 套 10 秒腳本
+                    # 生成 5 套腳本
                     kw = v_title[:10]
                     scripts = [
                         f"關於【{kw}】為什麼能火？底層邏輯就一個：抓住焦慮。學會這招，你也能翻倍播放！",
@@ -95,13 +84,11 @@ else:
                         f"豆包 AI 配合這套【{kw}】專屬腳本簡直絕了！10秒生成高質感內容，現在就去試！"
                     ]
 
-                    st.markdown("---")
                     for i, s in enumerate(scripts, 1):
-                        st.markdown(f'<div class="result-card"><b>🔥 方案 {i}：</b><br>{s}</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="result-card"><b>方案 {i}：</b><br>{s}</div>', unsafe_allow_html=True)
                         st.code(s)
-                    
                     st.balloons()
-                except Exception:
-                    st.error("分析失敗，請檢查連結是否正確。")
-        else:
-            st.warning("請先填寫連結")
+                except ImportError:
+                    st.error("🛠️ 分析組件還在安裝中，請等候 10 秒後重試，不要刷新頁面。")
+                except Exception as e:
+                    st.error(f"分析失敗：連結不支援或格式錯誤。")
